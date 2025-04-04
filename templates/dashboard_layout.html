@@ -1,0 +1,903 @@
+{% extends "base.html" %} {% block head %}
+    <style>
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            @media screen and (max-width: 850px) {
+            }
+        }
+
+        .header-nav {
+            display: flex;
+            flex-direction: row;
+            background: var(--background-highlight-color);
+            height: 60px;
+            margin: 10px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: var(--z2);
+
+            @media screen and (max-width: 850px) {
+                margin: 5px;
+                border-radius: 5px;
+            }
+
+            .left {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .center {
+                display: none;
+            }
+
+            .right {
+                display: flex;
+                gap: 20px;
+                font-size: 20px;
+
+                .notifications,
+                .profile {
+                    position: relative;
+
+                    > i {
+                        padding: 10px;
+                        border-radius: 50%;
+                        background: var(--accent-light-color);
+                        color: var(--text-darker-color);
+                        display: flex;
+                        cursor: pointer;
+
+                        &.show {
+                            /* background: var(--temp-color-3); */
+                            color: var(--text-color);
+                            background: var(--accent-color);
+                        }
+
+                        &:hover {
+                            color: var(--text-color);
+                            background: var(--accent-dim-color);
+                        }
+                    }
+
+
+                    .popup {
+                        z-index: var(--z1);
+                        display: none;
+                        position: absolute;
+                        top: 50px;
+                        right: -5px;
+                        height: 430px;
+                        width: 320px;
+                        border-radius: 20px;
+                        background: var(--background-highlight-color);
+                        box-shadow: 0 2px 10px 2px rgba(0, 0, 0, 0.811);
+
+                        &.show {
+                            display: flex;
+                            flex-direction: column;
+                            animation: revealDown 150ms ease-in;
+                        }
+
+                        .header {
+                            font-size: 16px;
+                            padding: 1rem;
+                            padding-bottom: 10px;
+                            border-bottom: 1px solid var(--text-faint-color);
+
+                            > p {
+                                margin: 0;
+                                padding: 0;
+                            }
+
+                            .account-heading {
+                                text-align: center;
+                            }
+                        }
+
+                        .content {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            overflow-y: auto;
+                            padding: 0 10px;
+
+                            .notifs-loader {
+                                display: flex;
+                                flex-direction: column;
+                                gap: 10px;
+                                align-items: center;
+                                justify-content: center;
+                                height: 100%;
+                                width: 100%;
+                                font-size: 20px;
+                                color: var(--text-faint-color);
+
+                                > p {
+                                    font-size: 14px;
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                #user-notif-container .popup {
+                    ::-webkit-scrollbar {
+                        width: 0; 
+                        height: 0;
+                    }
+
+
+                    @media screen and (max-width: 850px) {
+                        right: -60px;
+                    }
+                }
+
+                #user-profile-container .popup {
+                    width: 290px;
+                    height: 360px;
+                }
+            }
+        }
+
+        /* Notification styles */
+        .notification-item {
+            display: flex;
+            padding: 10px;
+            border-bottom: 1px solid var(--text-dim-color);
+            transition: background-color 0.2s ease;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .notification-item.seen {
+            opacity: 0.7;
+        }
+
+        .notification-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .notification-content h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .notification-content p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--text-faint-color);
+        }
+
+        .notification-time {
+            font-size: 10px;
+            color: var(--text-faint-color);
+        }
+
+        .notification-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-actions i {
+            cursor: pointer;
+            padding: 5px;
+            color: var(--text-faint-color);
+            transition: color 0.2s ease;
+        }
+
+        .notification-actions i:hover {
+            color: var(--danger-color);
+        }
+
+        .clear-all-btn {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            background: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .clear-all-btn:hover {
+            background: var(--accent-dim-color);
+        }
+
+        /* Profile popup styles */
+        .profile-popup-loader {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            font-size: 20px;
+            color: var(--text-faint-color);
+        }
+
+        .profile-popup-loader > p {
+            font-size: 14px;
+        }
+
+        .profile-popup-content {
+            display: flex;
+            flex-direction: column;
+            padding: 15px 0;
+        }
+
+        .profile-popup-content .profile-popup-avatar i,
+        .profile-popup-content .profile-popup-name,
+        .profile-popup-content .profile-popup-email {
+            cursor: pointer;
+        }
+
+        .profile-popup-avatar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .profile-popup-avatar i {
+            font-size: 60px;
+            color: var(--accent-color);
+        }
+
+        .profile-popup-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-popup-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .profile-popup-email {
+            font-size: 14px;
+            color: var(--text-faint-color);
+        }
+
+        .profile-popup-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-top: 1px solid var(--text-dim-color);
+            border-bottom: 1px solid var(--text-dim-color);
+        }
+
+        .profile-popup-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-popup-stat-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .profile-popup-stat-label {
+            font-size: 12px;
+            color: var(--text-faint-color);
+        }
+
+        /* Profile popup links styles removed as requested */
+
+        .profile-popup-logout {
+            display: flex;
+            justify-content: center;
+            margin-top: auto;
+        }
+
+        .logout-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--danger-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .logout-button:hover {
+            background: var(--danger-color);
+            opacity: 0.8;
+        }
+
+        .logout-button i {
+            font-size: 16px;
+        }
+
+        .no-notifications,
+        .error-notifications {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: var(--text-faint-color);
+            font-size: 14px;
+            padding-bottom: 40px;
+        }
+
+        .body-content {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            height: 100%;
+            margin: 10px;
+            margin-top: 0px;
+            overflow: hidden;
+
+            @media screen and (max-width: 850px) {
+                flex-direction: column-reverse;
+                gap: 5px;
+                margin: 0 5px;
+            }
+
+            .sidebar {
+                position: relative;
+                width: clamp(200px, 20%, 300px);
+                height: 100%;
+                /* background: var(--background-highlight-color); */
+                background: linear-gradient(
+                        180deg,
+                        rgba(25, 42, 26, 1) 40%,
+                        rgba(12, 19, 12, 1) 110%
+                );
+                border-radius: 8px;
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+
+                @media screen and (max-width: 850px) {
+                    width: 100%;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    min-height: 70px;
+                    max-height: 70px;
+                }
+
+                .sidebar-item {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 0.5rem 1rem;
+                    background: var(--text-darker-color);
+                    border-radius: 8px;
+                    cursor: pointer;
+                    will-change: transform;
+                    transform-origin: center;
+                    transition: all 100ms linear;
+
+                    @media screen and (max-width: 850px) {
+                        flex-direction: column;
+                        gap: 0;
+                        align-items: center;
+                    }
+
+                    &.active {
+                        background: var(--accent-color);
+
+                        &:hover {
+                            background: var(--accent-dim-color);
+                            /* transform: scale(1.01); */
+                            transition: all 50ms linear;
+                        }
+                    }
+
+                    &.bottom {
+                        position: absolute;
+                        bottom: 10px;
+                        width: calc(100% - 20px);
+                        outline: 1px solid var(--outline-color);
+                        background: var(--outline-dim-color);
+
+                        @media screen and (max-width: 850px) {
+                            background: var(--text-darker-color);
+                        }
+
+                        &.active {
+                            background: var(--accent-color);
+                        }
+
+                        @media screen and (max-width: 850px) {
+                            position: unset;
+                            width: unset;
+                            bottom: unset;
+                            outline: unset;
+                        }
+                    }
+
+                    &:hover {
+                        /* background: var(--accent-dim-color); */
+                        /* transform: scale(1.01); */
+                        outline: 1px solid var(--accent-color);
+                        transition: all 50ms linear;
+                    }
+
+                    > i {
+                        font-size: 18px;
+
+                        @media screen and (max-width: 550px) {
+                            font-size: 24px;
+                            margin-top: 5px;
+                        }
+                    }
+
+                    > p {
+                        font-size: 16px;
+
+                        @media screen and (max-width: 850px) {
+                            font-size: 12px;
+                        }
+
+                        @media screen and (max-width: 550px) {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            .smooth {
+                transition: all 1s ease-in;
+            }
+
+            .sidebar-content-outer {
+                width: calc(100dvw - 230px);
+                height: 100%;
+                /* background: var(--background-highlight-color); */
+                background: linear-gradient(
+                        180deg,
+                        rgba(25, 42, 26, 1) 40%,
+                        rgba(12, 19, 12, 1) 110%
+                );
+                padding: 1px 5px;
+                border-radius: 10px;
+
+                @media screen and (max-width: 850px) {
+                    height: calc(100% - 70px);
+                    width: 100%;
+                    padding: unset;
+                    border-radius: 5px;
+                }
+
+                .sidebar-content {
+                    position: relative;
+                    flex: 1;
+                    height: 100%;
+                    padding: 10px 5px;
+                    overflow-y: auto;
+                    scrollbar-gutter: stable both-edges;
+
+                    &.no-scroll {
+                        overflow-y: hidden;
+                    }
+
+                    @media screen and (max-width: 850px) {
+                        padding: unset;
+                    }
+                }
+            }
+        }
+    </style>
+
+    {% block dashboard_head %} {% endblock %} {% endblock %} {% block content %}
+    <div class="main-container">
+        <div class="header-nav">
+            <div class="left">
+                <div class="title branding-accent">Freemail API</div>
+            </div>
+            <div class="center"></div>
+            <div class="right">
+                <div class="notifications" id="user-notif-container">
+                    <i class="bx bx-bell"></i>
+                    <div class="popup">
+                        <div class="header">
+                            <p>Notifications</p>
+                            <button id="clear-all-notifications" class="clear-all-btn">
+                                Clear All
+                            </button>
+                        </div>
+                        <div class="content"></div>
+                    </div>
+                </div>
+                <div class="profile" id="user-profile-container">
+                    <i class="bx bx-user"></i>
+                    <div class="popup">
+                        <div class="header">
+                            <p class="account-heading">Account summary</p>
+                        </div>
+                        <div class="content">
+                            <div class="profile-popup-loader">
+                                <i class="bx bx-loader-alt bx-spin"></i>
+                                <p>Loading profile...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="body-content smooth">
+            <div class="sidebar">{% block dashboard_sidebar %} {% endblock %}</div>
+            <div class="sidebar-content-outer">
+                <div class="sidebar-overlays"></div>
+                <div class="sidebar-content" id="sidebar-content">
+                    {% block dashboard_sidebar_content %} {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block dashboard_content %} {% endblock %} {% endblock %} {% block scripts %}
+    <script>
+        // Nav consts
+        const notifBtn = document.querySelector("#user-notif-container i");
+        const notifPopup = document.querySelector("#user-notif-container .popup");
+        const accountBtn = document.querySelector("#user-profile-container i");
+        const accountPopup = document.querySelector("#user-profile-container .popup");
+
+        function hideAllPopups() {
+            notifPopup.classList.remove("show");
+            notifBtn.classList.remove("show");
+            accountPopup.classList.remove("show");
+            accountBtn.classList.remove("show");
+
+            // enable scroll on sidebar content
+            document.querySelector(".sidebar-content").classList.remove("no-scroll");
+        }
+
+        function togglePopup(button, popup) {
+            const isAlreadyOpen = popup.classList.contains("show");
+            hideAllPopups(); // Close any open popup first
+            if (!isAlreadyOpen) {
+                button.classList.add("show");
+                popup.classList.add("show");
+            }
+        }
+
+        notifBtn.addEventListener("click", (event) => {
+            event.stopPropagation(); // Prevent click from bubbling up to document
+            togglePopup(notifBtn, notifPopup);
+            if (notifPopup.classList.contains("show")) {
+                reloadNotifications();
+                // disable scroll on sidebar content
+                document.querySelector(".sidebar-content").classList.add("no-scroll");
+            }
+        });
+
+        function reloadNotifications() {
+            const notifsContainer = document.querySelector(
+                "#user-notif-container .popup .content"
+            );
+            const clearAllBtn = document.getElementById("clear-all-notifications");
+
+            notifsContainer.innerHTML = `<div class="notifs-loader">
+        <i class="bx bx-loader-alt bx-spin"></i>
+        <p>Getting your notifications...</p>
+        </div>`;
+
+            // Fetch notifications from the API
+            fetch("/api/profile/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        const notifications = data.notifications;
+
+                        // Hide or show Clear All button based on notification count
+                        if (notifications.length < 2) {
+                            clearAllBtn.style.display = "none";
+                        } else {
+                            clearAllBtn.style.display = "block";
+                        }
+
+                        if (notifications.length === 0) {
+                            notifsContainer.innerHTML = `<div class="no-notifications">
+            <p>You don't have any notifications</p>
+          </div>`;
+                            return;
+                        }
+
+                        // Clear the container
+                        notifsContainer.innerHTML = "";
+
+                        // Add each notification to the container
+                        notifications.forEach((notification) => {
+                            const notifElement = document.createElement("div");
+                            notifElement.className = "notification-item";
+                            if (notification.is_seen) {
+                                notifElement.classList.add("seen");
+                            }
+
+                            const notifContent = document.createElement("div");
+                            notifContent.className = "notification-content";
+
+                            const notifTitle = document.createElement("h3");
+                            notifTitle.textContent = notification.title;
+
+                            const notifMessage = document.createElement("p");
+                            notifMessage.textContent = notification.message;
+
+                            const notifTime = document.createElement("span");
+                            notifTime.className = "notification-time";
+                            notifTime.textContent = new Date(
+                                notification.created_at
+                            ).toLocaleString();
+
+                            notifContent.appendChild(notifTitle);
+                            notifContent.appendChild(notifMessage);
+                            notifContent.appendChild(notifTime);
+
+                            const notifActions = document.createElement("div");
+                            notifActions.className = "notification-actions";
+
+                            const trashIcon = document.createElement("i");
+                            trashIcon.className = "bx bx-trash";
+                            trashIcon.addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                markNotificationAsRead(notification.id, notifElement);
+                            });
+
+                            notifActions.appendChild(trashIcon);
+
+                            notifElement.appendChild(notifContent);
+                            notifElement.appendChild(notifActions);
+
+                            // If notification has a URL, make it clickable
+                            if (notification.url) {
+                                notifElement.addEventListener("click", () => {
+                                    window.location.href = notification.url;
+                                });
+                                notifElement.style.cursor = "pointer";
+                            }
+
+                            notifsContainer.appendChild(notifElement);
+                        });
+                    } else {
+                        notifsContainer.innerHTML = `<div class="error-notifications">
+          <p>Failed to load notifications</p>
+        </div>`;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching notifications:", error);
+                    notifsContainer.innerHTML = `<div class="error-notifications">
+        <p>Failed to load notifications</p>
+      </div>`;
+                });
+        }
+
+        function markNotificationAsRead(notificationId, notifElement) {
+            fetch("/api/profile/mark-notification-seen", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    notification_id: notificationId,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        {#console.log("Notification marked as read");#}
+                        // Remove the notification from the DOM
+                        if (notifElement && notifElement.parentNode) {
+                            notifElement.parentNode.removeChild(notifElement);
+
+                            // Check if there are no more notifications and show the empty message if needed
+                            const notifsContainer = document.querySelector(
+                                "#user-notif-container .popup .content"
+                            );
+                            const clearAllBtn = document.getElementById(
+                                "clear-all-notifications"
+                            );
+
+                            if (notifsContainer) {
+                                // Get the remaining notification items
+                                const remainingNotifications =
+                                    notifsContainer.querySelectorAll(".notification-item");
+
+                                // Hide Clear All button if fewer than 2 notifications remain
+                                if (remainingNotifications.length < 2) {
+                                    clearAllBtn.style.display = "none";
+                                }
+
+                                // Show empty message if no notifications remain
+                                if (remainingNotifications.length === 0) {
+                                    notifsContainer.innerHTML = `<div class="no-notifications">
+                <p>You don't have any notifications</p>
+              </div>`;
+                                }
+                            }
+                        }
+                    } else {
+                        console.error("Failed to mark notification as read");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error marking notification as read:", error);
+                });
+        }
+
+
+        accountBtn.addEventListener("click", (event) => {
+            event.stopPropagation();
+            togglePopup(accountBtn, accountPopup);
+            if (accountPopup.classList.contains("show")) {
+                // disable scroll on sidebar content
+                document.querySelector(".sidebar-content").classList.add("no-scroll");
+                loadUserProfilePopup();
+            }
+        });
+
+        function loadUserProfilePopup() {
+            const profileContainer = document.querySelector(
+                "#user-profile-container .popup .content"
+            );
+
+            profileContainer.innerHTML = `<div class="profile-popup-loader">
+        <i class="bx bx-loader-alt bx-spin"></i>
+        <p>Loading profile...</p>
+        </div>`;
+
+            // Fetch profile data from the API
+            fetch("/api/profile/info", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        const user = data.user;
+
+                        // Create profile content
+                        profileContainer.innerHTML = `
+          <div class="profile-popup-content">
+            <div class="profile-popup-avatar">
+              <i class='bx bx-user-circle' onclick="showProfileTab()"></i>
+            </div>
+            <div class="profile-popup-info">
+              <div class="profile-popup-name" onclick="showProfileTab()">${user.fullname}</div>
+              <div class="profile-popup-email" onclick="showProfileTab()">${user.email}</div>
+            </div>
+            <div class="profile-popup-stats">
+              <div class="profile-popup-stat">
+                <div class="profile-popup-stat-value">${user.emails_sent}</div>
+                <div class="profile-popup-stat-label">Emails</div>
+              </div>
+              <div class="profile-popup-stat">
+                <div class="profile-popup-stat-value">${user.days_active}</div>
+                <div class="profile-popup-stat-label">Days</div>
+              </div>
+              <div class="profile-popup-stat">
+                <div class="profile-popup-stat-value">${user.plan}</div>
+                <div class="profile-popup-stat-label">Plan</div>
+              </div>
+            </div>
+            <!-- Profile popup links removed as requested -->
+            <div class="profile-popup-logout">
+              <button class="logout-button" id="logout-button">
+                <i class='bx bx-log-out'></i>
+                Logout
+              </button>
+            </div>
+          </div>
+        `;
+
+                        // Add event listener for logout button
+                        document
+                            .getElementById("logout-button")
+                            .addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                window.location.href = "/logout";
+                            });
+                    } else {
+                        profileContainer.innerHTML = `<div class="error-notifications">
+          <p>Failed to load profile data</p>
+        </div>`;
+                    }
+
+                })
+                .catch((error) => {
+                    console.error("Error fetching profile data:", error);
+                    profileContainer.innerHTML = `<div class="error-notifications">
+        <p>Failed to load profile data</p>
+      </div>`;
+                });
+        }
+
+        // Hide popups when clicking outside
+        document.addEventListener("click", (event) => {
+            if (
+                !notifPopup.contains(event.target) &&
+                event.target !== notifBtn &&
+                !accountPopup.contains(event.target) &&
+                event.target !== accountBtn
+            ) {
+                hideAllPopups();
+            }
+        });
+
+        //Add event to all branding links
+        const brandingLinks = document.querySelectorAll(".branding-accent");
+        brandingLinks.forEach((link) => {
+            link.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openHomePage()
+            });
+        });
+
+        // Add event listener for Clear All button
+        document
+            .getElementById("clear-all-notifications")
+            .addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevent click from bubbling up
+                clearAllNotifications();
+            });
+
+        function clearAllNotifications() {
+            fetch("/api/profile/clear-notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        {#console.log("All notifications cleared");#}
+                        const notifsContainer = document.querySelector(
+                            "#user-notif-container .popup .content"
+                        );
+                        notifsContainer.innerHTML = `<div class="no-notifications">
+          <p>You don't have any notifications</p>
+        </div>`;
+                    } else {
+                        console.error("Failed to clear all notifications");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error clearing all notifications:", error);
+                });
+        }
+
+    </script>
+
+    {% block dashboard_scripts %} {% endblock %} {% endblock %}

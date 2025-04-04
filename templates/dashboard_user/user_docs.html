@@ -1,0 +1,328 @@
+<div class="user-docs-container space-y-6">
+    <div class="header">
+        <div class="header-content">
+            <h2 class="section-title">API Documentation</h2>
+            <p class="subtitle">Learn how to integrate Freemail API into your applications</p>
+        </div>
+    </div>
+
+    <div class="space-y-8">
+        <!-- Getting Started Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Getting Started</h2>
+                <p class="card-description">Everything you need to know to start using the Freemail API</p>
+            </div>
+            <div class="card-content space-y-4">
+                <div class="space-y-2">
+                    <h3 class="section-title">Authentication</h3>
+                    <p class="text-muted">
+                        All API requests require authentication using your API key. You can find your API key in the
+                        <a href="/dashboard/api-keys" class="link" onclick="showApiTab(event)">API Keys</a>
+                        section of your dashboard.
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="section-title">Base URL</h3>
+                    <div class="flex-container">
+                        <code class="code-inline">{{ email_api_url }}</code>
+                        <button class="btn-icon" data-copy="{{ email_api_url }}">
+                            <i class='bx bx-copy'></i>
+                            <span class="sr-only">Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="section-title">Rate Limits</h3>
+                    <p class="text-muted">
+                        The free tier allows up to 300 emails per month. Rate limiting is applied to prevent abuse.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sending Emails Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Sending Emails</h2>
+                <p class="card-description">Learn how to send emails using the API</p>
+            </div>
+            <div class="card-content space-y-6">
+                <div class="space-y-2">
+                    <h3 class="section-title">Endpoint</h3>
+                    <div class="flex-container">
+                        <code class="code-inline">POST /send</code>
+                        <button class="btn-icon" data-copy="POST /send">
+                            <i class='bx bx-copy'></i>
+                            <span class="sr-only">Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="section-title">Request Parameters</h3>
+                    <div class="params-table">
+                        <div class="params-header">
+                            <div>Parameter</div>
+                            <div>Description</div>
+                            <div>Required</div>
+                        </div>
+                        <div class="params-body">
+                            <div class="param-row">
+                                <div class="param-name">api_key</div>
+                                <div class="param-desc">Your API key</div>
+                                <div class="param-required">Yes</div>
+                            </div>
+                            <div class="param-row">
+                                <div class="param-name">sender_name</div>
+                                <div class="param-desc">Name displayed to the recipient</div>
+                                <div class="param-required">Yes</div>
+                            </div>
+                            <div class="param-row">
+                                <div class="param-name">subject</div>
+                                <div class="param-desc">Email subject</div>
+                                <div class="param-required">Yes</div>
+                            </div>
+                            <div class="param-row">
+                                <div class="param-name">message</div>
+                                <div class="param-desc">Email body (plain text or HTML)</div>
+                                <div class="param-required">Yes</div>
+                            </div>
+                            <div class="param-row">
+                                <div class="param-name">message_type</div>
+                                <div class="param-desc">Either "plain" or "html"</div>
+                                <div class="param-required">Yes</div>
+                            </div>
+                            <div class="param-row">
+                                <div class="param-name">receiver_email</div>
+                                <div class="param-desc">Recipient's email address</div>
+                                <div class="param-required">Yes</div>
+                            </div>
+                            <div class="param-row">
+                                <div class="param-name">footer</div>
+                                <div class="param-desc">Optional text appended to the message</div>
+                                <div class="param-required">No</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <div class="tabs-list">
+                        <button class="tab-trigger active" data-tab="python">Python</button>
+                        <button class="tab-trigger" data-tab="curl">cURL</button>
+                        <button class="tab-trigger" data-tab="javascript">JavaScript</button>
+                        <button class="tab-trigger" data-tab="golang">Golang</button>
+                        <button class="tab-trigger" data-tab="rust">Rust</button>
+                    </div>
+                    <div class="tab-content active" id="python">
+                        <div class="code-block" data-language="python">
+                            <pre><code class="language-python">import requests
+
+url = "{{ email_api_url }}"
+payload = {
+    "api_key": "your_api_key",
+    "sender_name": "Your Name",
+    "subject": "Hello from Freemail API",
+    "message": "This is a test email sent using Freemail API.",
+    "message_type": "plain",
+    "receiver_email": "recipient@example.com"
+}
+
+response = requests.post(url, json=payload)
+print(response.json())</code></pre>
+                            <button class="copy-button">
+                                <i class='bx bx-copy'></i>
+                                <span class="sr-only">Copy code</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="curl">
+                        <div class="code-block">
+                            <pre><code class="language-bash">curl -X POST {{ email_api_url }} \
+  -H "Content-Type: application/json" \
+  -d '{
+    "api_key": "your_api_key",
+    "sender_name": "Your Name",
+    "subject": "Hello from Freemail API",
+    "message": "This is a test email sent using Freemail API.",
+    "message_type": "plain",
+    "receiver_email": "recipient@example.com"
+  }'</code></pre>
+                            <button class="copy-button">
+                                <i class='bx bx-copy'></i>
+                                <span class="sr-only">Copy code</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="javascript">
+                        <div class="code-block" data-language="javascript">
+                            <pre><code class="language-javascript">// Using fetch
+const sendEmail = async () => {
+  const response = await fetch('{{ email_api_url }}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      api_key: 'your_api_key',
+      sender_name: 'Your Name',
+      subject: 'Hello from Freemail API',
+      message: 'This is a test email sent using Freemail API.',
+      message_type: 'plain',
+      receiver_email: 'recipient@example.com'
+    })
+  });
+
+  const data = await response.json();
+  console.log(data);
+};
+
+sendEmail();</code></pre>
+                            <button class="copy-button">
+                                <i class='bx bx-copy'></i>
+                                <span class="sr-only">Copy code</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="golang">
+                        <div class="code-block" data-language="go">
+                            <pre><code class="language-go">package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"io/ioutil"
+)
+
+func main() {
+	url := "https://freemail.maev.rocks/send"
+	data := map[string]string{
+		"api_key":       "your_api_key",
+		"sender_name":   "Your Name",
+		"subject":       "Hello from Freemail API",
+		"message":       "This is a test email sent using Freemail API.",
+		"message_type":  "plain",
+		"receiver_email": "recipient@example.com",
+	}
+
+	jsonData, _ := json.Marshal(data)
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("Response:", string(body))
+}</code></pre>
+                            <button class="copy-button">
+                                <i class='bx bx-copy'></i>
+                                <span class="sr-only">Copy code</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="rust">
+                        <div class="code-block" data-language="rust">
+                            <pre><code class="language-rust">use reqwest::Client;
+use serde_json::json;
+use tokio;
+
+#[tokio::main]
+async fn main() -> Result<(), reqwest::Error> {
+    let client = Client::new();
+    let url = "https://freemail.maev.rocks/send";
+
+    let payload = json!({
+        "api_key": "your_api_key",
+        "sender_name": "Your Name",
+        "subject": "Hello from Freemail API",
+        "message": "This is a test email sent using Freemail API.",
+        "message_type": "plain",
+        "receiver_email": "recipient@example.com"
+    });
+
+    let response = client
+        .post(url)
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .send()
+        .await?;
+
+    println!("Response: {:?}", response.text().await?);
+    Ok(())
+}</code></pre>
+                            <button class="copy-button">
+                                <i class='bx bx-copy'></i>
+                                <span class="sr-only">Copy code</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="section-title">Response</h3>
+                    <div class="code-block" data-language="json">
+                        <pre><code class="language-json">{
+  "status": "success",
+  "message": "Email sent successfully",
+  "email_id": "email_12345"
+}</code></pre>
+                        <button class="copy-button">
+                            <i class='bx bx-copy'></i>
+                            <span class="sr-only">Copy code</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="section-title">Error Responses</h3>
+                    <div class="code-block" data-language="json">
+                        <pre><code class="language-json">{
+  "status": "error",
+  "message": "Invalid API key"
+}
+
+{
+  "status": "error",
+  "message": "Missing required parameters"
+}
+
+{
+  "status": "error",
+  "message": "Rate limit exceeded"
+}</code></pre>
+                        <button class="copy-button">
+                            <i class='bx bx-copy'></i>
+                            <span class="sr-only">Copy code</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Console Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Test Console</h2>
+                <p class="card-description">Test sending emails directly from your browser</p>
+            </div>
+            <div class="card-content">
+                <div class="center-content">
+                    <a href="/dashboard/test-console" onclick="showConsoleTab(event)" class="btn btn-primary">
+                        Open Test Console
+                        <i class='bx bx-chevron-right'></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_user/user_docs.css') }}">
+<script src="{{ url_for('static', filename='js/dashboard_user/user_docs.js') }}"></script>

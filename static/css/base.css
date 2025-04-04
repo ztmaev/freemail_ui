@@ -1,0 +1,154 @@
+:root {
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+
+    --z1: 1;
+    --z2: 2;
+    --z3: 3;
+
+    --accent-color: #0d9023;
+    --accent-dim-color: #00820e;
+    --accent-light-color: #b9f2b9;
+
+    --text-color: #eee;
+    --text-dark-color: #181818;
+    --text-darker-color: #0c130c;
+    --text-faint-color: #b1b3b1;
+    --text-dim-color: #6e7071;
+    --text-highlight-color: #a7d2a7;
+    --background-color: #111011;
+    --background-card-color: #191918;
+    --background-highlight-color: #192a1a;
+    --tint-color: #020202de;
+
+    --outline-color: #4c4c52;
+    --outline-dim-color: #2b2a2b;
+
+    --code-gray-color: #19191A;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+
+}
+
+* {
+    /* outline: 1px solid #ccc; */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    will-change: transform;
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+
+    @media (max-width: 850px) {
+        width: 0;
+        height: 0;
+    }
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-light-color);
+    border-radius: 10px;
+
+    @media (max-width: 850px) {
+        background: transparent;
+    }
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-faint-color);
+
+}
+
+
+body {
+    font-family: 'Raleway', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+.main-content-container {
+    width: 100dvw;
+    height: 100dvh;
+    overflow: hidden;
+
+}
+
+.branding-accent{
+    cursor: pointer;
+    background-image: linear-gradient(
+        90deg,
+        var(--accent-color) 0%,
+        var(--accent-light-color) 30%,
+        var(--text-color) 50%,
+        var(--accent-light-color) 70%,
+        var(--accent-color) 110% 
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+  }
+
+.global-notif {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    padding: 1rem;
+    padding-right: 2rem;
+    border: 1px solid var(--text-dim-color);
+    border-radius: 12px;
+    background: var(--text-dark-color);
+    box-shadow: var(--shadow-sm);
+    border-left: 3px solid var(--accent-color);
+    /*border-right: 1px solid var(--accent-color);*/
+    border-top: 1px solid var(--accent-color);
+    min-width: 300px;
+    max-width: 420px;
+    min-height: 80px;
+    z-index: var(--z2);
+    display: none;
+    align-items: center;
+    animation: showNotif 200ms linear;
+
+    @media (max-width: 850px) {
+        bottom: unset;
+        top: 70px;
+        right: 10px;
+    }
+
+    &.show {
+        display: flex;
+    }
+
+    &.success {
+        border-left: 3px solid var(--success-color);
+        /*border-right: 1px solid var(--accent-color);*/
+        border-top: 1px solid var(--success-color);
+    }
+
+    &.error {
+        border-left: 3px solid var(--danger-color);
+        /*border-right: 1px solid var(--accent-color);*/
+        border-top: 1px solid var(--danger-color);
+    }
+
+    .message {}
+
+    >i {
+        position: absolute;
+        right: 0.8rem;
+        top: 0.8rem;
+        cursor: pointer;
+        /* font-weight: bold; */
+    }
+}

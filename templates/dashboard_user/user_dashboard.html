@@ -1,0 +1,145 @@
+<div class="user-dashboard-container space-y-6">
+    <div class="header">
+        <div class="header-content">
+            <h2 class="section-title">Dashboard</h2>
+            <p class="subtitle">Welcome to your Freemail API dashboard</p>
+        </div>
+    </div>
+
+    <div class="dashboard-stats-container">
+        <div class="stats-card">
+            <div class="stats-icon">
+                <i class='bx bx-envelope'></i>
+            </div>
+            <div class="stats-content">
+                <h3 class="stats-value" id="emails-sent">0</h3>
+                <p class="stats-label">Emails Sent</p>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="stats-content">
+                <h3 class="stats-value" id="delivery-rate">0%</h3>
+                <p class="stats-label">Delivery Rate</p>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon">
+                <i class='bx bx-time'></i>
+            </div>
+            <div class="stats-content">
+                <h3 class="stats-value" id="emails-remaining">0</h3>
+                <p class="stats-label">Emails Remaining</p>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon">
+                <i class='bx bx-calendar'></i>
+            </div>
+            <div class="stats-content">
+                <h3 class="stats-value" id="reset-days">0</h3>
+                <p class="stats-label">Days Until Reset</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content-grid">
+        <div class="card activity-card">
+            <div class="card-header">
+                <h2 class="card-title">Recent Activity</h2>
+                <p class="card-description">Your latest email sending activity</p>
+            </div>
+            <div class="card-content">
+                <div class="activity-list" id="activity-list">
+                    <div class="activity-empty">
+                        <i class='bx bx-inbox'></i>
+                        <p>No activity yet</p>
+                    </div>
+                    <!-- Activity items will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-outline" id="view-all-activity">
+                    <i class='bx bx-list-ul'></i>
+                    View All Activity
+                </button>
+            </div>
+        </div>
+
+        <div class="card quick-actions-card">
+            <div class="card-header">
+                <h2 class="card-title">Quick Actions</h2>
+                <p class="card-description">Common tasks you might want to perform</p>
+            </div>
+            <div class="card-content">
+                <div class="quick-actions-grid">
+                    <a href="/dashboard/test-console" class="quick-action-item" id="send-test-email">
+                        <div class="quick-action-icon">
+                            <i class='bx bx-send'></i>
+                        </div>
+                        <div class="quick-action-text">
+                            <h3>Send Test Email</h3>
+                            <p>Send a test email to verify your setup</p>
+                        </div>
+                    </a>
+
+                    <a href="/dashboard/api-keys" class="quick-action-item" id="view-api-keys" onclick="showApiTab(event)">
+                        <div class="quick-action-icon">
+                            <i class='bx bx-key'></i>
+                        </div>
+                        <div class="quick-action-text">
+                            <h3>View API Keys</h3>
+                            <p>Access or regenerate your API keys</p>
+                        </div>
+                    </a>
+
+                    <a href="/dashboard/documentation" class="quick-action-item" id="view-docs" onclick="showDocsTab(event)">
+                        <div class="quick-action-icon">
+                            <i class='bx bx-book-open'></i>
+                        </div>
+                        <div class="quick-action-text">
+                            <h3>View Documentation</h3>
+                            <p>Learn how to use the Freemail API</p>
+                        </div>
+                    </a>
+
+                    <a href="#" class="quick-action-item" id="profile" onclick="showProfileTab(event)">
+                        <div class="quick-action-icon">
+                            <i class='bx bx-user'></i>
+                        </div>
+                        <div class="quick-action-text">
+                            <h3>Profile</h3>
+                            <p>Manage your account settings</p>
+                        </div>
+                    </a>
+                </div>
+                </div>
+        </div>
+    </div>
+
+    <div class="card usage-card">
+        <div class="card-header">
+            <h2 class="card-title">Usage Overview</h2>
+            <p class="card-description">Your current API usage statistics</p>
+        </div>
+        <div class="card-content">
+            <div class="usage-progress">
+                <div class="progress-label">
+                    <span>Monthly Email Usage</span>
+                    <span id="usage-count">0/100 emails</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="usage-progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_user/user_dashboard.css') }}">
+<script src="{{ url_for('static', filename='js/dashboard_user/user_dashboard.js') }}"></script>

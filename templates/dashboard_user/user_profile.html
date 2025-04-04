@@ -1,0 +1,285 @@
+<div class="user-profile-container space-y-6">
+  <div class="header">
+    <div class="header-content">
+      <h2 class="section-title">My Profile</h2>
+      <p class="subtitle">Manage your account information and settings</p>
+    </div>
+  </div>
+
+  <div class="profile-content-grid">
+    <!-- Profile Card -->
+    <div class="card profile-card">
+      <div class="profile-header">
+        <div class="avatar-container">
+          <div class="avatar">
+            <i class="bx bx-user-circle"></i>
+          </div>
+        </div>
+        <div class="profile-info">
+          <h3 class="profile-name">-</h3>
+          <p class="profile-email">-</p>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="profile-stats">
+          <div class="stat-item">
+            <span class="stat-value">0</span>
+            <span class="stat-label">Emails Sent</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">0</span>
+            <span class="stat-label">Days Active</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">-</span>
+            <span class="stat-label">Current Plan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Settings Card -->
+    <div class="card settings-card">
+      <div class="card-header">
+        <h2 class="card-title">Account Settings</h2>
+        <p class="card-description">Update your personal information</p>
+      </div>
+      <div class="card-content">
+        <form class="settings-form" id="profile-form">
+          <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <div class="input-with-icon">
+              <i class="bx bx-user"></i>
+              <input type="text" id="fullname" name="fullname" value="" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-with-icon">
+              <i class="bx bx-envelope"></i>
+              <input type="email" id="email" name="email" value="" disabled />
+            </div>
+            <p class="input-help">Email address cannot be changed</p>
+          </div>
+
+          <div class="form-group">
+            <label for="timezone">Timezone</label>
+            <div class="input-with-icon">
+              <i class="bx bx-time"></i>
+              <select id="timezone" name="timezone">
+                <option value="utc">UTC (Coordinated Universal Time)</option>
+                <option value="est">EST (Eastern Standard Time)</option>
+                <option value="cst">CST (Central Standard Time)</option>
+                <option value="pst">PST (Pacific Standard Time)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="bx bx-save"></i>
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Security Card -->
+    <div class="card security-card">
+      <div class="card-header">
+        <h2 class="card-title">Security</h2>
+        <p class="card-description">
+          Manage your password and security settings
+        </p>
+      </div>
+      <div class="card-content">
+        <form class="security-form" id="security-form">
+          <div class="form-group">
+            <label for="current-password">Current Password</label>
+            <div class="input-with-icon">
+              <i class="bx bx-lock"></i>
+              <input
+                type="password"
+                id="current-password"
+                name="current-password"
+              />
+              <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                <i class="bx bx-hide"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="new-password">New Password</label>
+            <div class="input-with-icon">
+              <i class="bx bx-lock-open"></i>
+              <input type="password" id="new-password" name="new-password" />
+              <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                <i class="bx bx-hide"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password">Confirm New Password</label>
+            <div class="input-with-icon">
+              <i class="bx bx-check-shield"></i>
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+              />
+              <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                <i class="bx bx-hide"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="bx bx-lock"></i>
+              Update Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notification Preferences Card -->
+    <div class="card notification-card">
+      <div class="card-header">
+        <h2 class="card-title">Notification Preferences</h2>
+        <p class="card-description">Manage how you receive notifications</p>
+      </div>
+      <div class="card-content">
+        <div class="notification-options">
+          <div class="notification-option" data-type="email_notification">
+            <div class="option-info">
+              <h3>Email Notifications</h3>
+              <p>Receive notifications about your account via email</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="notification-option" data-type="marketing_notification">
+            <div class="option-info">
+              <h3>Marketing Emails</h3>
+              <p>Receive updates about new features and promotions</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="notification-option" data-type="security_notification">
+            <div class="option-info">
+              <h3>Security Alerts</h3>
+              <p>Get notified about important security events</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Card -->
+    <div class="card logout-card">
+      <div class="card-header">
+        <h2 class="card-title">Account options</h2>
+        <p class="card-description">Security and account options</p>
+      </div>
+      <div class="card-content">
+        <div class="logout-actions">
+          <div class="f2a-status">
+            <div class="action-info">
+              <h3>Two-Factor Authentication status</h3>
+              <p>Two-factor authentication is currently <span class status>enabled</span></p>
+            </div>
+            <div class="toggle-switch">
+              <input type="checkbox" />
+              <span class="toggle-slider"></span>
+            </div>
+          </div>
+          <div class="logout-action">
+            <div class="action-info">
+              <h3 class="logout">Logout</h3>
+              <p>Sign out from your account on this device</p>
+            </div>
+            <button class="btn btn-primary" id="logout-btn">
+              <i class="bx bx-log-out"></i>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danger Zone Card -->
+    <div class="card danger-zone-card">
+      <div class="card-header">
+        <h2 class="card-title">Danger Zone</h2>
+        <p class="card-description">Irreversible account actions</p>
+      </div>
+      <div class="card-content">
+        <div class="danger-actions">
+          <div class="danger-action">
+            <div class="action-info">
+              <h3>Delete Account</h3>
+              <p>Permanently delete your account and all associated data</p>
+            </div>
+            <button class="btn btn-danger" id="delete-account-btn">
+              <i class="bx bx-trash"></i>
+              Delete Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Account Overlay -->
+    <div class="delete-account-overlay" id="delete-account-overlay">
+      <div class="delete-account-dialog">
+        <h2>Delete Your Account?</h2>
+        <p>
+          This action cannot be undone. All of your data will be permanently
+          deleted.
+        </p>
+        <p>Please enter your password to confirm:</p>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <i class="bx bx-lock"></i>
+            <input
+              type="password"
+              id="delete-confirm-password"
+              placeholder="Enter your password"
+            />
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+              <i class="bx bx-hide"></i>
+            </button>
+          </div>
+        </div>
+        <div class="overlay-actions">
+          <button class="btn btn-outline" id="cancel-delete-btn">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete-btn">
+            Delete Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/dashboard_user/user_profile.css') }}"
+/>
+<script src="{{ url_for('static', filename='js/dashboard_user/user_profile.js') }}"></script>

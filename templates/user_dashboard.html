@@ -1,0 +1,153 @@
+{% extends "dashboard_layout.html" %} {% block dashboard_head %}
+    <title>User Dashboard</title>
+    <style>
+        .sidebar-content-item {
+            display: none;
+
+            &.shown {
+                display: block;
+                animation: fadeIn 0.2s;
+            }
+        }
+    </style>
+{% endblock %} {% block dashboard_sidebar %}
+    <div class="sidebar-item" data-at="dashboard">
+        <i class="bx bxs-dashboard"></i>
+        <p>Dashboard</p>
+    </div>
+
+    <div class="sidebar-item" data-at="documentation">
+        <i class="bx bx-file"></i>
+        <p>Documentation</p>
+    </div>
+
+    <div class="sidebar-item" data-at="api-keys">
+        <i class="bx bx-key"></i>
+        <p>Api Keys</p>
+    </div>
+
+    <div class="sidebar-item" data-at="test-console">
+        <i class="bx bx-cog"></i>
+        <p>Test Console</p>
+    </div>
+
+    <div class="sidebar-item bottom" data-at="profile">
+        <i class="bx bx-user"></i>
+        <p>Account</p>
+    </div>
+{% endblock %} {% block dashboard_sidebar_content %}
+    <div class="sidebar-content-item" data-atr="dashboard">
+        {% include "dashboard_user/user_dashboard.html" %}
+    </div>
+
+    <div class="sidebar-content-item" data-atr="api-keys">
+        {% include "dashboard_user/user_api_keys.html" %}
+    </div>
+
+    <div class="sidebar-content-item" data-atr="documentation">
+        {% include "dashboard_user/user_docs.html" %}
+    </div>
+    <div class="sidebar-content-item" data-atr="test-console">
+        {% include "dashboard_user/test_console.html" %}
+    </div>
+
+    <div class="sidebar-content-item" data-atr="profile">
+        {% include "dashboard_user/user_profile.html" %}
+    </div>
+
+    <div class="sidebar-content-item" data-atr="history">
+        {% include "dashboard_user/email_history.html" %}
+    </div>
+
+{% endblock %} {% block dashboard_scripts %}
+    <script>
+        const sidebarItems = document.querySelectorAll(".sidebar-item");
+        const sidebarContent = document.querySelector(".sidebar-content");
+        const sidebarContentItems = document.querySelectorAll(
+            ".sidebar-content-item"
+        );
+
+        function populateSidebarContent(contentitem) {
+            // hide all content items
+            sidebarContentItems.forEach((item) => {
+                item.classList.remove("shown");
+            });
+            // show the content item with the name
+            sidebarContentItems.forEach((item) => {
+                if (item.dataset.atr === contentitem) {
+                    item.classList.add("shown");
+                }
+            });
+
+            // scroll snap to the top of the container
+            const container = document.querySelector("#sidebar-content");
+            container.scrollTop = 0;
+        }
+
+        function processUrl() {
+            const url = window.location.pathname;
+            const path = url.split("/");
+            const at = path[path.length - 1];
+
+            if (at == "") {
+                sidebarItems[0].click();
+            } else {
+                sidebarItems.forEach((item) => {
+                    if (item.dataset.at == at) {
+                        item.click();
+                    }
+                });
+            }
+        }
+
+        sidebarItems.forEach((item) => {
+            item.addEventListener("click", () => {
+                sidebarItems.forEach((item) => {
+                    item.classList.remove("active");
+                });
+                item.classList.add("active");
+                populateSidebarContent(item.dataset.at);
+                // item >p
+                updatePageTitle(item.querySelector("p").innerHTML);
+
+                if (item.dataset.at == "dashboard") {
+                    history.pushState(null, null, "/dashboard");
+                    refreshDashboard();
+                } else {
+                    history.pushState(null, null, "/dashboard/" + item.dataset.at);
+                }
+            });
+        });
+
+        function showPage(page) {
+            sidebarItems.forEach((item) => {
+                item.classList.remove("active");
+            });
+            sidebarItems.forEach((item) => {
+                if (item.dataset.at == page) {
+                    item.classList.add("active");
+                    populateSidebarContent(item.dataset.at);
+                    updatePageTitle(item.querySelector("p").innerHTML);
+                }
+            });
+        }
+
+        // URL listener
+        window.addEventListener("popstate", function (event) {
+            const path = window.location.pathname;
+            if (path === "/dashboard") {
+                showPage("dashboard");
+            } else if (path === "/dashboard/documentation") {
+                showPage("documentation");
+            } else if (path === "/dashboard/api-keys") {
+                showPage("api-keys");
+            } else if (path === "/dashboard/test-console") {
+                showPage("test-console");
+            } else if (path === "/dashboard/profile") {
+                showPage("profile");
+            }
+        });
+
+        processUrl();
+    </script>
+{% endblock %}

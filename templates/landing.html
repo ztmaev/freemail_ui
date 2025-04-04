@@ -1,0 +1,527 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Freemail API</title>
+
+    <style>
+        .main-container {
+            height: 100dvh;
+            width: 100dvw;
+            display: flex;
+            flex-direction: column;
+            background: var(--text-darker-color);
+            color: var(--text-color);
+
+            .header {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin: 10px;
+                padding: 10px 15px;
+                border-radius: 12px;
+                background: var(--background-highlight-color);
+
+                @media (max-width: 850px) {
+                    gap: 5px;
+                }
+
+                .branding {
+                    p {
+                        font-size: 24px;
+                        font-weight: bold;
+                    }
+                }
+
+                .right-buttons {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    gap: 20px;
+
+                    @media (max-width: 850px) {
+                        gap: 10px;
+                    }
+
+                    .button {
+                        padding: 8px 20px;
+                        background: var(--accent-color);
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.1s ease-in-out;
+
+                        @media (max-width: 850px) {
+                            padding: 8px 10px;
+                        }
+
+                        &:hover {
+                            background: var(--accent-dim-color);
+                            transition: all 0.1s ease-in-out;
+                        }
+                    }
+                }
+            }
+
+            .landing-content {
+                flex: 1;
+                background: var(--background-highlight-color);
+                background: linear-gradient(
+                        180deg,
+                        rgba(25, 42, 26, 1) 40%,
+                        rgba(12, 19, 12, 1) 80%
+                );
+                margin: 10px;
+                margin-top: 0;
+                border-radius: 12px;
+                position: relative;
+                overflow: hidden;
+
+                .landing-overlays {
+                    position: absolute;
+                    z-index: 1;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    padding: 1rem;
+                    display: none;
+                    animation: fadeIn 200ms ease-in-out;
+
+                    @media (max-width: 850px) {
+                        padding: 5px 0;
+                    }
+
+                    &.shown {
+                        display: block;
+                    }
+
+                    .overlay-close {
+                        position: absolute;
+                        z-index: 1;
+                        top: 1.5rem;
+                        right: 1.5rem;
+                        cursor: pointer;
+                        font-size: 24px;
+                        /* background: var(--text-darker-color); */
+                        background: #050705;
+                        border-radius: 10px;
+
+                        @media (max-width: 850px) {
+                            top: 0.5rem;
+                            right: 0.5rem;
+                        }
+                    }
+
+                    .landing-overlays-inner {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        padding: 1rem;
+                        background: var(--tint-color);
+                        backdrop-filter: blur(2px);
+                        border-radius: 8px;
+                        box-shadow: 0 0 10px 6px var(--tint-color);
+
+                        @media (max-width: 850px) {
+                            padding: 1rem 0;
+                        }
+                    }
+
+                    .overlay.auth {
+                        display: none;
+                        width: 100%;
+
+                        &.shown {
+                            display: flex;
+                        }
+
+                        .main-content-container {
+                            height: 100%;
+
+                            .auth-container {
+                                height: 100%;
+                                background: unset;
+                            }
+                        }
+
+                    }
+
+                    .overlay.docs {
+                        display: none;
+                        width: 100%;
+                        height: 100%;
+                        overflow-y: scroll;
+
+                        .header {
+                            margin: 10px 0;
+                            background: var(--text-darker-color);
+                        }
+
+                        &.shown {
+                            display: flex;
+                        }
+
+                        .space-y-8 .card:nth-child(3) {
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+
+        .landing-landing-content {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+
+            @media (max-width: 850px) {
+                overflow-y: scroll;
+            }
+
+
+            .hero {
+                flex: 1;
+                height: 100%;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                padding: 3rem;
+                gap: 2rem;
+                max-width: 1200px;
+                margin: 0 auto;
+
+
+                @media (max-width: 850px) {
+                    flex-direction: column-reverse;
+                    gap: 2rem;
+                    padding: 1rem;
+                    min-height: calc(100dvh - 90px);
+                    background: linear-gradient(180deg, rgba(25, 42, 26, 1) 40%, rgba(12, 19, 12, 1) 80%);
+                }
+
+                .landing-content-left {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+
+                    .large-text {
+                        p {
+                            font-size: 40px;
+                            font-weight: bold;
+                        }
+                    }
+
+                    .sub-text {
+                        p {
+                            font-size: 24px;
+                            font-weight: 500;
+                        }
+                    }
+
+                    .buttons-group {
+                        display: flex;
+                        flex-direction: row;
+                        gap: 20px;
+
+                        @media (max-width: 850px) {
+                            justify-content: center;
+                        }
+
+                        .button {
+                            padding: 8px 20px;
+                            background: var(--accent-color);
+                            border-radius: 8px;
+                            cursor: pointer;
+                            transition: all 0.1s ease-in-out;
+                            white-space: nowrap;
+
+                            &.view-docs {
+                                background: unset;
+                                border: 1px solid var(--accent-color);
+
+                                &:hover {
+                                    background: unset;
+                                    color: var(--accent-light-color);
+                                    border: 1px solid var(--accent-light-color);
+                                }
+                            }
+
+                            &:hover {
+                                background: var(--accent-dim-color);
+                                transition: all 0.1s ease-in-out;
+                            }
+                        }
+                    }
+                }
+
+                .landing-content-right {
+                    flex: 1;
+
+                    @media (max-width: 850px) {
+                        display: flex;
+                        align-items: flex-end;
+                    }
+
+                    .image {
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: contain;
+                            border-radius: 8px;
+                        }
+                    }
+                }
+            }
+
+            .hero-cards {
+                height: 250px;
+                background: var(--background-highlight-color);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px;
+
+                @media screen and (max-width: 850px) {
+                    flex-direction: column;
+                    gap: 10px;
+                    height: auto;
+                    padding: 10px;
+                }
+
+                .hero-card {
+                    height: 100%;
+                    width: 300px;
+                    background: var(--text-darker-color);
+                    border-radius: 8px;
+                    padding: 20px;
+
+                    @media (max-width: 850px) {
+                        width: auto;
+                    }
+
+                    .card-icon {
+                        font-size: 32px;
+                        text-align: center;
+                        color: var(--accent-light-color)
+                    }
+
+                    .card-title {
+                        font-size: 20px;
+                        font-weight: bold;
+                        text-align: center;
+                        margin-bottom: 10px;
+                    }
+
+                    .card-description {
+                        color: var(--text-faint-color);
+                    }
+                }
+            }
+        }
+
+
+    </style>
+{% endblock %} {% block content %}
+    <div class="main-container">
+        <div class="header">
+            <div class="branding">
+                <p class="branding-accent">Freemail API</p>
+            </div>
+            <div class="right-buttons">
+                {% if session.get('user_id') %}
+                    <div class="button dashboard">Dashboard</div>
+                    <div class="button logout">Log out</div>
+                {% else %}
+                    <div class="button login">Log In</div>
+                    <div class="button signup">Sign up</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="landing-content">
+            <div class="landing-overlays">
+                <div class="overlay-close">
+                    <i class="bx bx-x"></i>
+                </div>
+                <div class="landing-overlays-inner">
+                    <div class="overlay auth">
+                        {% include "auth.html" %}
+                    </div>
+                    <div class="overlay docs">
+                        {% include "dashboard_user/user_docs.html" %}
+                    </div>
+                </div>
+            </div>
+            <div class="landing-landing-content">
+                <div class="hero">
+                    <div class="landing-content-left">
+                        <div class="large-text">
+                            <p>A FREE email API for Developers</p>
+                        </div>
+                        <div class="sub-text">
+                            <p>Send emails from your apps with just a few lines of code</p>
+                        </div>
+                        <div class="buttons-group">
+                            {% if session.get('user_id') %}
+                                <div class="button dashboard">Go to Dashboard</div>
+                            {% else %}
+                                <div class="button start">Get started for free</div>
+                            {% endif %}
+                            <div class="button view-docs">Documentation</div>
+                        </div>
+
+                    </div>
+                    <div class="landing-content-right">
+                        <div class="image">
+                            <img src="{{ url_for('static', filename='images/carbon.png') }}" alt="landing">
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-cards">
+                    <div class="hero-card">
+                        <div class="card-icon">
+                            <i class='bx bx-code-block'></i>
+                        </div>
+                        <div class="card-title">
+                            <p>Simple Integration</p>
+                        </div>
+                        <div class="card-description">
+                            <p>Integrate with just a few lines of code using our RESTful API</p>
+                        </div>
+                    </div>
+                    <div class="hero-card">
+                        <div class="card-icon">
+                            <i class='bx bx-check-shield'></i>
+                        </div>
+                        <div class="card-title">
+                            <p>Secure & Reliable</p>
+                        </div>
+                        <div class="card-description">
+                            <p>Built with security in mind, ensuring your emails are delivered safely</p>
+                        </div>
+                    </div>
+                    <div class="hero-card">
+                        <div class="card-icon">
+                            <i class='bx bx-line-chart'></i>
+                        </div>
+                        <div class="card-title">
+                            <p>Real-time Analytics</p>
+                        </div>
+                        <div class="card-description">
+                            <p>Track delivery rates, opens, and engagement in real-time</p>
+                        </div>
+                    </div>
+                    <div class="hero-card">
+                        <div class="card-icon">
+                            <i class='bx bx-dollar-circle'></i>
+                        </div>
+                        <div class="card-title">
+                            <p>Free Tier</p>
+                        </div>
+                        <div class="card-description">
+                            <p>Start with our generous free tier - no credit card required</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %} {% block scripts %}
+    <script>
+        const overlaysContainer = document.querySelector(".landing-overlays");
+        const overlays = document.querySelectorAll(".overlay");
+        const overlayClose = document.querySelector(".overlay-close");
+        const loginButton = document.querySelector(".login");
+        const logoutButton = document.querySelector(".logout");
+        const signupButton = document.querySelector(".signup");
+        const contentDocsBtn = document.querySelector(".button.view-docs");
+        const contentStartBtn = document.querySelector(".button.start");
+        const dashboardButton = document.querySelectorAll(".dashboard");
+
+        const brandingLinks = document.querySelectorAll(".branding-accent");
+        brandingLinks.forEach((link) => {
+            link.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openHomePage()
+            });
+        });
+
+        function showOverlay(overlay, page = null) {
+            overlays.forEach((overlay) => {
+                overlay.classList.remove("shown");
+            });
+            if (page) {
+                const formLoginBtn = document.querySelector(".form-links .auth-link[data-form='login']");
+                const formRegisterBtn = document.querySelector(".form-links .auth-link[data-form='register']");
+                if (page === 'login') {
+                    formLoginBtn.click();
+                }
+                if (page === 'register') {
+                    formRegisterBtn.click();
+                }
+            }
+
+            overlay.classList.add("shown");
+            overlaysContainer.classList.add("shown");
+        }
+
+        function hideOverlays() {
+            overlaysContainer.classList.remove("shown");
+        }
+
+        if (loginButton) {
+            loginButton.addEventListener("click", () => {
+                showOverlay(overlays[0], 'login');
+            })
+        }
+
+        if (signupButton) {
+            signupButton.addEventListener("click", () => {
+                showOverlay(overlays[0], 'register');
+            })
+        }
+
+        contentDocsBtn.addEventListener("click", () => {
+            showOverlay(overlays[1]);
+        })
+
+        if (contentStartBtn) {
+            contentStartBtn.addEventListener("click", () => {
+                showOverlay(overlays[0], 'register');
+            })
+        }
+
+        if (dashboardButton) {
+            dashboardButton.forEach((button) => {
+                button.addEventListener("click", () => {
+                    window.location.href = "/dashboard";
+                })
+            })
+        }
+
+        if (logoutButton) {
+            logoutButton.addEventListener("click", () => {
+                window.location.href = "/logout";
+            })
+        }
+
+        //close overlays
+        overlaysContainer.addEventListener("click", (e) => {
+            if (e.target.classList.contains("landing-overlays")) {
+                hideOverlays();
+            }
+        })
+
+        overlayClose.addEventListener("click", () => {
+            hideOverlays();
+        })
+
+        // clicking outside the overlay
+
+    </script>
+{% endblock %}

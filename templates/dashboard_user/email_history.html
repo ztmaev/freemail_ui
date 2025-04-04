@@ -1,0 +1,820 @@
+<style>
+    .history-container-content {
+        width: 100%;
+        height: 100%;
+        min-height: calc(100vh - 110px);
+        display: flex;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 5px;
+        flex-direction: column;
+
+        @media screen and (max-width: 850px) {
+            padding: 0;
+            min-height: unset;
+        }
+
+        .history-container-content-inner {
+            width: 100%;
+            height: 100%;
+            padding: 1.5rem 1rem;
+            background-color: var(--text-darker-color);
+            border-radius: 8px;
+            overflow-y: hidden;
+
+            @media screen and (max-width: 850px) {
+                height: calc(100dvh - 260px);
+            }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            /* margin-bottom: 20px; */
+            flex-wrap: wrap;
+        }
+    }
+
+    /* Email Detail Modal Styles */
+    .email-modal {
+        display: none;
+        align-items: center;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+    }
+
+    .search-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: nowrap;
+
+        > form {
+            flex: 1;
+
+            .search-input {
+                width: 100%;
+            }
+        }
+
+        > button {
+            padding: 8px;
+            aspect-ratio: 1;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            background: var(--text-highlight-color);
+            transition: all 0.1s ease-out;
+
+            &:hover {
+                background: var(--accent-color);
+                transition: all 0.1s ease-out;
+            }
+        }
+    }
+
+    .search-input {
+        flex: 1;
+        min-width: 200px;
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: 1px solid var(--outline-color);
+        background-color: var(--background-card-color);
+        color: var(--text-color);
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-select {
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: 1px solid var(--outline-color);
+        background-color: var(--background-card-color);
+        color: var(--text-color);
+    }
+
+    .date-input {
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: 1px solid var(--outline-color);
+        background-color: var(--background-card-color);
+        color: var(--text-color);
+    }
+
+    #email-table-container {
+        max-height: calc(100vh - 400px);
+        overflow-y: auto;
+
+        @media screen and (max-width: 850px) {
+            max-height: calc(100vh - 440px);
+        }
+    }
+
+    .email-table {
+        width: 100%;
+        border-collapse: collapse;
+        /* margin-bottom: 20px; */
+
+        > thead {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+    }
+
+    .email-table th,
+    .email-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--outline-dim-color);
+    }
+
+    /* Hide the second column */
+    .email-table td:nth-child(1),
+    .email-table th:nth-child(1),
+    .email-table td:nth-child(3),
+    .email-table th:nth-child(3) {
+      @media screen and (max-width: 850px) {
+        display: none;
+      }
+    }
+
+
+    .email-table th {
+        background-color: var(--background-card-color);
+        color: var(--text-highlight-color);
+        font-weight: bold;
+    }
+
+    .email-table tr:hover {
+        background-color: var(--background-highlight-color);
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        width: fit-content;
+    }
+
+    .status-delivered {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+    .status-failed {
+        background-color: var(--danger-color);
+        color: white;
+    }
+
+    .status-pending {
+        background-color: #f0ad4e;
+        color: white;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .pagination-button {
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: 1px solid var(--outline-color);
+        background-color: var(--background-card-color);
+        color: var(--text-color);
+        cursor: pointer;
+    }
+
+    .pagination-button:hover {
+        background-color: var(--accent-color);
+        color: white;
+    }
+
+    .pagination-button.active {
+        background-color: var(--accent-color);
+        color: white;
+    }
+
+    .pagination-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-faint-color);
+    }
+
+    .loading {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-faint-color);
+    }
+
+    .modal-content {
+        background-color: var(--background-card-color);
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid var(--outline-color);
+        border-radius: 8px;
+        width: 80%;
+        max-width: 800px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+
+        @media screen and (max-width: 850px) {
+            width: calc(100dvw - 20px);
+            margin: 0 auto;
+        }
+    }
+
+    .close-modal {
+        color: var(--text-faint-color);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1;
+    }
+
+    .close-modal:hover,
+    .close-modal:focus {
+        color: var(--accent-color);
+        text-decoration: none;
+    }
+
+    .email-detail-header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--outline-dim-color);
+    }
+
+    .email-detail-title {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4rem;
+
+        > span {
+            font-size: 1rem;
+            color: var(--text-faint-color);
+        }
+    }
+
+    .email-detail-meta {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .email-detail-label {
+        font-weight: bold;
+        color: var(--text-faint-color);
+    }
+
+    .email-detail-content {
+        padding: 15px;
+        background-color: var(--background-highlight-color);
+        border-radius: 4px;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        margin-top: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .email-detail-attachments {
+        margin-top: 20px;
+    }
+
+    .email-detail-footer {
+        margin-top: 1rem;
+    }
+
+    .email-detail-attachment {
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        background-color: var(--background-highlight-color);
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    @media screen and (max-width: 768px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .search-container {
+            width: 100%;
+        }
+
+        .email-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<div class="history-container-content">
+    <div class="header">
+        <div class="header-content">
+            <h2 class="section-title">Email History</h2>
+            <p class="subtitle">View and search your sent emails</p>
+        </div>
+    </div>
+    <div class="history-container-content-inner">
+        <div class="search-container">
+            <form onsubmit="handleSearchForm(event)">
+                <input
+                        type="text"
+                        id="search-input"
+                        class="search-input"
+                        placeholder="Search by recipient, subject, or sender..."
+                />
+            </form>
+            <button id="search-button" class="button-primary">
+                <i class="bx bx-search"></i>
+            </button>
+            <button id="reset-button" class="button-secondary">
+                <i class="bx bx-reset"></i>
+            </button>
+        </div>
+
+        <div class="filter-container">
+            <select id="status-filter" class="filter-select">
+                <option value="">All Status</option>
+                <option value="delivered">Delivered</option>
+                <option value="failed">Failed</option>
+                <option value="pending">Pending</option>
+            </select>
+
+            <input
+                    type="date"
+                    id="date-from"
+                    class="date-input"
+                    placeholder="From Date"
+            />
+            <input
+                    type="date"
+                    id="date-to"
+                    class="date-input"
+                    placeholder="To Date"
+            />
+        </div>
+
+        <div id="email-table-container">
+            <table class="email-table" id="email-table">
+                <thead>
+                <tr>
+                    <th>Recipient</th>
+                    <th>Subject</th>
+                    <th>Sender</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody id="email-table-body">
+                <!-- Email rows will be populated here -->
+                </tbody>
+            </table>
+
+            <div id="no-results" class="no-results" style="display: none">
+                No emails found matching your search criteria.
+            </div>
+
+            <div id="loading" class="loading" style="display: none">
+                Loading emails...
+            </div>
+        </div>
+
+        <div class="pagination" id="pagination">
+            <!-- Pagination buttons will be populated here -->
+        </div>
+    </div>
+</div>
+
+<!-- Email Detail Modal -->
+<div id="email-modal" class="email-modal">
+    <div class="modal-content">
+        <span class="close-modal" id="close-modal">&times;</span>
+        <div class="email-detail-header">
+            <h3 class="email-detail-title">
+                <span>subject:</span>
+                <p id="email-detail-subject"></p>
+            </h3>
+            <div class="email-detail-meta">
+                <div class="email-detail-label">From:</div>
+                <div id="email-detail-sender">sender@example.com</div>
+
+                <div class="email-detail-label">To:</div>
+                <div id="email-detail-recipient">recipient@example.com</div>
+
+                <div class="email-detail-label">Date:</div>
+                <div id="email-detail-date">January 1, 2023 12:00 PM</div>
+
+                <div class="email-detail-label">Status:</div>
+                <div id="email-detail-status">Delivered</div>
+
+                <div class="email-detail-label">Email ID:</div>
+                <div id="email-detail-id">-</div>
+
+                <div class="email-detail-label">Type:</div>
+                <div id="email-detail-type">-</div>
+            </div>
+        </div>
+
+        <div class="email-detail-body">
+            <h4>Message</h4>
+            <div class="email-detail-content" id="email-detail-body">
+                Email content will appear here.
+            </div>
+        </div>
+
+        <div
+                class="email-detail-footer"
+                id="email-detail-footer-container"
+                style="display: none"
+        >
+            <h4>Footer</h4>
+            <div class="email-detail-content" id="email-detail-footer">No footer</div>
+        </div>
+
+        <div
+                class="email-detail-attachments"
+                id="email-detail-attachments-container"
+        >
+            <h4>Attachments</h4>
+            <div id="email-detail-attachments">No attachments</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Global variables
+    let currentPage = 1;
+    let totalPages = 1;
+    let itemsPerPage = 10;
+    let searchQuery = "";
+    let statusFilter = "";
+    let dateFrom = "";
+    let dateTo = "";
+
+    // DOM elements
+    const searchInput = document.getElementById("search-input");
+    const searchButton = document.getElementById("search-button");
+    const resetButton = document.getElementById("reset-button");
+    const statusFilterSelect = document.getElementById("status-filter");
+    const dateFromInput = document.getElementById("date-from");
+    const dateToInput = document.getElementById("date-to");
+    const emailTableBody = document.getElementById("email-table-body");
+    const noResultsDiv = document.getElementById("no-results");
+    const loadingDiv = document.getElementById("loading");
+    const paginationDiv = document.getElementById("pagination");
+
+    // Initialize the page
+    document.addEventListener("DOMContentLoaded", () => {
+        // Load initial data
+        fetchEmails();
+
+        // Add event listeners
+        searchButton.addEventListener("click", handleSearch);
+        resetButton.addEventListener("click", handleReset);
+        statusFilterSelect.addEventListener("change", handleFiltersChange);
+        dateFromInput.addEventListener("change", handleFiltersChange);
+        dateToInput.addEventListener("change", handleFiltersChange);
+    });
+
+    function handleSearchForm(event) {
+        event.preventDefault();
+        handleSearch();
+    }
+
+    // Function to fetch emails with search and pagination
+    function fetchEmails() {
+        // Show loading state
+        emailTableBody.innerHTML = "";
+        loadingDiv.style.display = "block";
+        noResultsDiv.style.display = "none";
+
+        // Prepare request data
+        const requestData = {
+            page: currentPage,
+            items_per_page: itemsPerPage,
+            search: searchQuery || null,
+            status: statusFilter || null,
+            date_from: dateFrom || null,
+            date_to: dateTo || null,
+        };
+
+        // Make API request
+        fetch("/api/profile/email-history", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Hide loading state
+                loadingDiv.style.display = "none";
+
+                if (data.status === "success") {
+                    // Update pagination info
+                    totalPages = data.total_pages;
+                    currentPage = data.current_page;
+
+                    // Display emails
+                    displayEmails(data.emails);
+
+                    // Update pagination controls
+                    updatePagination();
+                } else {
+                    // Show error
+                    console.error("Error fetching emails:", data.message);
+                    noResultsDiv.textContent = "Error loading emails. Please try again.";
+                    noResultsDiv.style.display = "block";
+                }
+            })
+            .catch((error) => {
+                // Handle error
+                console.error("Error fetching emails:", error);
+                loadingDiv.style.display = "none";
+                noResultsDiv.textContent = "Error loading emails. Please try again.";
+                noResultsDiv.style.display = "block";
+            });
+    }
+
+    // Function to display emails in the table
+    function displayEmails(emails) {
+        if (!emails || emails.length === 0) {
+            // Show no results message
+            noResultsDiv.style.display = "block";
+            return;
+        }
+
+        // Clear existing rows
+        emailTableBody.innerHTML = "";
+
+        // Add email rows
+        emails.forEach((email) => {
+            const row = document.createElement("tr");
+
+            // Format date
+            const date = new Date(email.timestamp);
+            const formattedDate =
+                date instanceof Date && !isNaN(date)
+                    ? date.toLocaleDateString() + " " + date.toLocaleTimeString()
+                    : email.timestamp;
+
+            // Create status badge
+            const statusBadge = `<span class="status-badge status-${email.status}">${email.status}</span>`;
+
+            // Populate row
+            row.innerHTML = `
+                <td>${email.recipient}</td>
+                <td>${email.subject}</td>
+                <td>${email.sender}</td>
+                <td>${statusBadge}</td>
+                <td>${formattedDate}</td>
+            `;
+
+            // Add click event to show email details
+            row.style.cursor = "pointer";
+            row.addEventListener("click", () => showEmailDetails(email));
+
+            emailTableBody.appendChild(row);
+        });
+    }
+
+    // Function to update pagination controls
+    function updatePagination() {
+        paginationDiv.innerHTML = "";
+
+        if (totalPages <= 1) {
+            return;
+        }
+
+        // Previous button
+        const prevButton = document.createElement("button");
+        prevButton.className = "pagination-button";
+        prevButton.textContent = "Previous";
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchEmails();
+            }
+        });
+        paginationDiv.appendChild(prevButton);
+
+        // Page buttons
+        const maxButtons = 5;
+        const startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        const endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = document.createElement("button");
+            pageButton.className =
+                "pagination-button" + (i === currentPage ? " active" : "");
+            pageButton.textContent = i;
+            pageButton.addEventListener("click", () => {
+                currentPage = i;
+                fetchEmails();
+            });
+            paginationDiv.appendChild(pageButton);
+        }
+
+        // Next button
+        const nextButton = document.createElement("button");
+        nextButton.className = "pagination-button";
+        nextButton.textContent = "Next";
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener("click", () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                fetchEmails();
+            }
+        });
+        paginationDiv.appendChild(nextButton);
+    }
+
+    // Function to handle search
+    function handleSearch() {
+        searchQuery = searchInput.value.trim();
+        currentPage = 1; // Reset to first page
+        fetchEmails();
+    }
+
+    // Function to handle reset
+    function handleReset() {
+        // Clear all filters
+        searchInput.value = "";
+        statusFilterSelect.value = "";
+        dateFromInput.value = "";
+        dateToInput.value = "";
+
+        // Reset variables
+        searchQuery = "";
+        statusFilter = "";
+        dateFrom = "";
+        dateTo = "";
+        currentPage = 1;
+
+        // Fetch emails
+        fetchEmails();
+    }
+
+    // Function to handle filter changes
+    function handleFiltersChange() {
+        statusFilter = statusFilterSelect.value;
+        dateFrom = dateFromInput.value;
+        dateTo = dateToInput.value;
+        currentPage = 1; // Reset to first page
+        fetchEmails();
+    }
+
+    // Email Detail Modal Functions
+    const emailModal = document.getElementById("email-modal");
+    const closeModalBtn = document.getElementById("close-modal");
+
+    // Function to show email details in modal
+    function showEmailDetails(email) {
+        // Populate modal with email details
+        document.getElementById("email-detail-subject").textContent =
+            email.subject || "No Subject";
+        document.getElementById("email-detail-sender").textContent =
+            email.sender || "Unknown";
+        document.getElementById("email-detail-recipient").textContent =
+            email.recipient || "Unknown";
+
+        // Format date
+        const date = new Date(email.timestamp);
+        const formattedDate =
+            date instanceof Date && !isNaN(date)
+                ? date.toLocaleDateString() + " " + date.toLocaleTimeString()
+                : email.timestamp || "Unknown";
+        document.getElementById("email-detail-date").textContent = formattedDate;
+
+        // Set status with appropriate styling
+        const statusElement = document.getElementById("email-detail-status");
+        statusElement.textContent = email.status || "Unknown";
+        statusElement.className = ""; // Clear previous classes
+        if (email.status) {
+            statusElement.classList.add(`status-badge`, `status-${email.status}`);
+        }
+
+        // Set email ID and type
+        document.getElementById("email-detail-id").textContent = email.id || "-";
+        document.getElementById("email-detail-type").textContent =
+            email.email_type || "-";
+
+        // Set email body content - Fix for content not showing
+        const emailBodyElement = document.getElementById("email-detail-body");
+        // Check for content in multiple possible properties (body, content, message, html_content)
+        const emailContent =
+            email.body ||
+            email.content ||
+            email.message ||
+            email.html_content ||
+            "No content available";
+        emailBodyElement.textContent = emailContent;
+
+        // Handle footer if available
+        const footerContainer = document.getElementById(
+            "email-detail-footer-container"
+        );
+        const footerElement = document.getElementById("email-detail-footer");
+        if (email.email_footer && email.email_footer.trim() !== "") {
+            footerElement.textContent = email.email_footer;
+            footerContainer.style.display = "block";
+        } else {
+            footerElement.textContent = "No footer";
+            footerContainer.style.display = "none";
+        }
+
+        // Handle attachments if available
+        const attachmentsContainer = document.getElementById(
+            "email-detail-attachments"
+        );
+        if (email.attachments && email.attachments.length > 0) {
+            let attachmentsHTML = "";
+            email.attachments.forEach((attachment) => {
+                attachmentsHTML += `<div class="email-detail-attachment">${
+                    attachment.filename
+                } (${formatFileSize(attachment.size)})</div>`;
+            });
+            attachmentsContainer.innerHTML = attachmentsHTML;
+            document.getElementById(
+                "email-detail-attachments-container"
+            ).style.display = "block";
+        } else {
+            attachmentsContainer.innerHTML = "No attachments";
+            document.getElementById(
+                "email-detail-attachments-container"
+            ).style.display = "none";
+        }
+
+        // Show the modal
+        emailModal.style.display = "flex";
+    }
+
+    // Helper function to format file size
+    function formatFileSize(bytes) {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    }
+
+    // Close modal when clicking the close button - Fixed event handler
+    closeModalBtn.addEventListener("click", function (event) {
+        emailModal.style.display = "none";
+        event.preventDefault();
+        event.stopPropagation();
+    });
+
+    // Close modal when clicking outside the modal content
+    window.addEventListener("click", (event) => {
+        if (event.target === emailModal) {
+            emailModal.style.display = "none";
+        }
+    });
+
+    // Add keyboard event listener to close modal with Escape key
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && emailModal.style.display === "flex") {
+            emailModal.style.display = "none";
+        }
+    });
+</script>

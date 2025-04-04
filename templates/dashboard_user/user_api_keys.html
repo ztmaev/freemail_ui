@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Keys - Freemail</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_user/user_api_keys.css') }}">
+</head>
+
+<body>
+    <div class="api-content-container">
+        <div class="api-keys-container space-y-6">
+            <div class="header">
+                <div class="header-content">
+                    <h2 class="section-title">API Keys</h2>
+                    <p class="subtitle">Manage your API keys for authentication</p>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+
+                <div class="alert">
+                    <i class='bx bx-error-circle'></i>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Important</h4>
+                        <p class="alert-description">
+                            Your API key is used to authenticate your requests. Keep it secure and never share it in
+                            public
+                            repositories or client-side code.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Your API Key</h2>
+                        <p class="card-description">Use this key to authenticate your API requests</p>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div class="space-y-2">
+                            <div class="api-key-display hidden">
+                                <div class="api-key-field">
+                                    <i class='bx bx-key'></i>
+                                    <span id="apiKeyValue" class="api-key-text">Loading...</span>
+                                </div>
+                                <button id="copyApiKeyBtn" class="btn btn-outline">
+                                    <i class='bx bx-copy'></i>
+                                    Copy
+                                </button>
+                                <button id="regenerateKeyBtn" class="btn btn-outline hidden">
+                                    <i class='bx bx-refresh'></i>
+                                    <span id="regenerateKeyText">Regenerate Key</span>
+                                </button>
+                            </div>
+                            <div class="api-key-none">
+                                <p class="text-muted">You don't have an API key yet.</p>
+                                <button id="generateKeyBtn" class="btn btn-outline">
+                                    <i class='bx bx-plus'></i>
+                                    <span id="generateKeyText">Generate API Key</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">API Usage</h2>
+                        <p class="card-description">How to use your API key to send emails</p>
+                    </div>
+                    <div class="card-content space-y-6">
+                        <div class="space-y-2">
+                            <h3 class="section-title">HTTP Request</h3>
+                            <p class="text-muted">
+                                Make a POST request to our endpoint with your API key and email details:
+                            </p>
+                            <div class="code-block" data-language="bash">
+                                <pre><code class="language-bash" id="requestCode">POST {{ email_api_url }}
+Content-Type: application/json
+
+{
+  "api_key": "your_api_key",
+  "sender_name": "Your Name",
+  "subject": "Email Subject",
+  "message": "Your email content here",
+  "message_type": "plain", or "html"
+  "receiver_email": "recipient@example.com",
+  "footer": "Optional footer text" optional
+}</code></pre>
+                                <button class="copy-button" id="copyRequestBtn">
+                                    <i class='bx bx-copy'></i>
+                                    <span class="sr-only">Copy code</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h3 class="section-title">Response</h3>
+                            <p class="text-muted">
+                                You'll receive a JSON response with the status of your request:
+                            </p>
+                            <div class="code-block" data-language="json">
+                                <pre><code class="language-json" id="responseCode">{
+"status": "success",
+"message": "Email sent successfully",
+"email_id": "email_12345"
+}</code></pre>
+                                <button class="copy-button" id="copyResponseBtn">
+                                    <i class='bx bx-copy'></i>
+                                    <span class="sr-only">Copy code</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/dashboard_user/user_api_keys.js') }}"></script>
+</body>
+
+</html>
