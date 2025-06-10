@@ -1,4 +1,4 @@
-name: Deploy Flask App to VPS via Docker
+name: Deploy Flask App to VPS (Password SSH)
 
 on:
   push:
@@ -15,14 +15,14 @@ jobs:
       - name: Run tests (optional)
         run: |
           echo "Running unit tests..."
-          # e.g., pytest tests/
+          # e.g., pytest
 
-      - name: Deploy to VPS using SSH
+      - name: Deploy using SSH password
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_PASS }}
+          password: ${{ secrets.VPS_PASS }}
           port: ${{ secrets.VPS_PORT }}
           script: |
             cd /home/${{ secrets.VPS_USER }}/Tests
